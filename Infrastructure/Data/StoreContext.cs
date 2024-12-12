@@ -24,7 +24,7 @@ namespace Infrastructure.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=DESKTOP-RDVKRO2\\SQLEXPRESS;Database=SkinetDatabase;Trusted_Connection=SSPI;Encrypt=false;TrustServerCertificate=true");
+            optionsBuilder.UseSqlServer("Server=DESKTOP-RDVKRO2\\SQLEXPRESS;Database=Skinet;Trusted_Connection=SSPI;Encrypt=false;TrustServerCertificate=true");
             base.OnConfiguring(optionsBuilder);
         }
     }
