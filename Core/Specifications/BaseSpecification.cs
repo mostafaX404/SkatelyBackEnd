@@ -19,6 +19,12 @@ namespace Core.Specifications
 
         public bool IsDistinc { get; private set; }
 
+        public int Take { get; private set; }
+        public int Skip { get; private set; }
+
+
+        public bool IsPagingEnabled { get; private set; }
+
         public void AddOrderBy(Expression<Func<T, object>>? orderBy)
         {
             this.OrderBy = orderBy; 
@@ -29,9 +35,26 @@ namespace Core.Specifications
             this.OrderByDesc = orderByDesc;
         }
 
+        public IQueryable<T> AppplyCriateria(IQueryable<T> query)
+        {
+            if(Criteria != null)
+            {
+                query = query.Where(Criteria);
+            }
+
+            return query;
+        }
+
         protected void ApplyDistinc()
         {
             IsDistinc = true;
+        }
+
+        protected void ApplyPaging(int skip , int take)
+        {
+            Skip = skip;
+            Take = take;
+            IsPagingEnabled = true;
         }
     }
 

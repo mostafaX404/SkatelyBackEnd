@@ -26,6 +26,11 @@ public class SpecificationEvaluator<T> where T : BaseEntity
             {
                 query = query.Distinct();
             }
+
+            if (specs.IsPagingEnabled)
+            {
+                query = query.Skip(specs.Skip).Take(specs.Take);
+            }
         }
 
         return query;
@@ -35,38 +40,43 @@ public class SpecificationEvaluator<T> where T : BaseEntity
         IQueryable<T> query,
         ISpecification<T, TResult> specs)
     {
-        if (specs != null)
+
+        if (specs.Criteria != null)
         {
-            if (specs.Criteria != null)
-            {
-                query = query.Where(specs.Criteria);
-            }
-
-            if (specs.OrderBy != null)
-            {
-                query = query.OrderBy(specs.OrderBy);
-            }
-
-            if (specs.OrderByDesc != null)
-            {
-                query = query.OrderByDescending(specs.OrderByDesc);
-            }
-
-            var selectQuery = query as IQueryable<TResult>;
-
-            if (specs.Select != null)
-            {
-                selectQuery = query.Select(specs.Select);
-            }
-
-            if (specs.IsDistinc)
-            {
-                selectQuery = selectQuery?.Distinct();
-            }
-
-            return selectQuery ?? query.Cast<TResult>();
+            query = query.Where(specs.Criteria);
         }
 
-        return query.Cast<TResult>();
+        if (specs.OrderBy != null)
+        {
+            query = query.OrderBy(specs.OrderBy);
+        }
+
+        if (specs.OrderByDesc != null)
+        {
+            query = query.OrderByDescending(specs.OrderByDesc);
+        }
+
+        var selectQuery = query as IQueryable<TResult>;
+
+        if (specs.Select != null)
+        {
+            selectQuery = query.Select(specs.Select);
+        }
+
+        if (specs.IsDistinc)
+        {
+            selectQuery = selectQuery?.Distinct();
+        }
+
+        if (specs.IsPagingEnabled)
+        {
+            selectQuery = selectQuery?.Skip(specs.Skip).Take(specs.Take);
+        }
+
+
+        return selectQuery ?? query.Cast<TResult>();
+
+
     }
 }
+
