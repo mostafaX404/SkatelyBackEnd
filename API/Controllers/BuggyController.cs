@@ -32,7 +32,7 @@ namespace API.Controllers
         }
 
 
-        [HttpGet("validationerror")]
+        [HttpPost("validationerror")]
         public IActionResult GetValidationError(Product product)
         {
             return Ok();

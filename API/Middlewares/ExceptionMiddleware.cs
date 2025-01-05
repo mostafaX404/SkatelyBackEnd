@@ -19,7 +19,7 @@ namespace API.Middlewares
             catch (Exception ex)
             {
                 await HandleExceptionAsync(context , ex , env);
-                throw;
+                
             }
         }
 
