@@ -8,16 +8,26 @@
       "sslPort": 44378
     }
   },
-  "profiles\": {": null,
-  "http": {
-    "commandName": "Project",
-    "dotnetRunMessages": true,
-    "launchBrowser": false,
-    //"launchUrl": "swagger",
-    "applicationUrl": "http://localhost:5000;https://localhost:5001",
-    "environmentVariables": {
-      "ASPNETCORE_ENVIRONMENT": "Development"
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:5000",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "https": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:5001;http://localhost:5000",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_Kestrel__Certificates__Default__Path": "cert.pem",
+        "ASPNETCORE_Kestrel__Certificates__Default__KeyPath": "cert-key.pem"
+      }
     }
   }
 }
-

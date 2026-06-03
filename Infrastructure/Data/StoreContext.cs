@@ -14,6 +14,7 @@ namespace Infrastructure.Data
     {
         public DbSet<Product> Products { get; set; }
         public DbSet<Address> Addresses { get; set; }
+        public DbSet<DeliveryMethod> DeliveryMethods { get; set; }
 
 
 
@@ -25,11 +26,7 @@ namespace Infrastructure.Data
             base.OnModelCreating(modelBuilder);
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer("Server=DESKTOP-RDVKRO2\\SQLEXPRESS;Database=Skinet;Trusted_Connection=SSPI;Encrypt=false;TrustServerCertificate=true");
-            base.OnConfiguring(optionsBuilder);
-        }
+       
     }
 
     
