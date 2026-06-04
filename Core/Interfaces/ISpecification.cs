@@ -16,6 +16,10 @@ namespace Core.Interfaces
 
         public Expression<Func<T, object>>? OrderByDesc { get; }
 
+        public List<Expression<Func<T, object>>> Includes { get; } 
+
+        public List<string> IncludeStrings { get; } 
+
         bool IsDistinc { get; }
 
         int Take {  get; }

@@ -3,8 +3,7 @@ using Core.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Stripe;
 
-public class PaymentService(IGenericRepository<Core.Entities.Product>
- ProductRepo, IGenericRepository<DeliveryMethod> DMRepo,
+public class PaymentService(IUnitOfWork uow,
  ICartService cartService, IConfiguration config) : IPaymentService
 {
     public async Task<ShoppingCart> CreateOrUpdatePaymentIntent(string cartId)
@@ -18,7 +17,7 @@ public class PaymentService(IGenericRepository<Core.Entities.Product>
 
         if (cart.DeliveryMethodId.HasValue)
         {
-            var method = await DMRepo.GetByIdAsync((int)cart.DeliveryMethodId);
+            var method = await uow.Repository<DeliveryMethod>().GetByIdAsync((int)cart.DeliveryMethodId);
 
             if (method is null) return null;
 
@@ -27,7 +26,7 @@ public class PaymentService(IGenericRepository<Core.Entities.Product>
 
         foreach (var item in cart.Items)
         {
-            var product = await ProductRepo.GetByIdAsync(item.ProductId);
+            var product = await uow.Repository<Core.Entities.Product>().GetByIdAsync(item.ProductId);
             if (product is null) return null;
             if (item.Price != product.Price)
             {

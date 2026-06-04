@@ -1,5 +1,6 @@
 ﻿using Core.Entities;
 using Core.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 public class SpecificationEvaluator<T> where T : BaseEntity
 {
@@ -32,6 +33,9 @@ public class SpecificationEvaluator<T> where T : BaseEntity
                 query = query.Skip(specs.Skip).Take(specs.Take);
             }
         }
+
+        query = specs.Includes.Aggregate(query, (current, include) => current.Include(include));
+        query = specs.IncludeStrings.Aggregate(query, (current, include) => current.Include(include));
 
         return query;
     }

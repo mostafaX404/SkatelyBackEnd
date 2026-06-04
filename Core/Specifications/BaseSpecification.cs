@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace Core.Specifications
 {
-    public class BaseSpecification<T>(Expression<Func<T,bool>>? _criteria ) : ISpecification<T>
+    public class BaseSpecification<T>(Expression<Func<T, bool>>? _criteria) : ISpecification<T>
     {
-        protected BaseSpecification():this(null){}
-        public Expression<Func<T,bool>>? Criteria => _criteria;
+        protected BaseSpecification() : this(null) { }
+        public Expression<Func<T, bool>>? Criteria => _criteria;
 
         public Expression<Func<T, object>>? OrderBy { get; private set; }
 
@@ -25,9 +25,13 @@ namespace Core.Specifications
 
         public bool IsPagingEnabled { get; private set; }
 
+        public List<Expression<Func<T, object>>> Includes { get; } = [];
+
+        public List<string> IncludeStrings { get; } = [];
+
         public void AddOrderBy(Expression<Func<T, object>>? orderBy)
         {
-            this.OrderBy = orderBy; 
+            this.OrderBy = orderBy;
         }
 
         public void AddOrderByDesc(Expression<Func<T, object>>? orderByDesc)
@@ -35,9 +39,19 @@ namespace Core.Specifications
             this.OrderByDesc = orderByDesc;
         }
 
+        protected void AddInclude(Expression<Func<T, object>> includeExpression)
+        {
+            Includes.Add(includeExpression);
+        }
+
+        protected void AddInclude(string includeString)
+        {
+            IncludeStrings.Add(includeString);
+        }
+
         public IQueryable<T> AppplyCriateria(IQueryable<T> query)
         {
-            if(Criteria != null)
+            if (Criteria != null)
             {
                 query = query.Where(Criteria);
             }
@@ -50,7 +64,7 @@ namespace Core.Specifications
             IsDistinc = true;
         }
 
-        protected void ApplyPaging(int skip , int take)
+        protected void ApplyPaging(int skip, int take)
         {
             Skip = skip;
             Take = take;
@@ -71,7 +85,7 @@ namespace Core.Specifications
         {
             Select = selectExpression;
         }
-    
+
     }
 
 }
