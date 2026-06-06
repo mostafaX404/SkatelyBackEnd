@@ -3,12 +3,24 @@ using Core.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Stripe;
 
-public class PaymentService(IUnitOfWork uow,
- ICartService cartService, IConfiguration config) : IPaymentService
+public class PaymentService : IPaymentService
 {
+    private readonly IUnitOfWork uow;
+    private readonly ICartService cartService ;
+    private readonly IConfiguration config ;
+
+    public PaymentService(IUnitOfWork _uow,
+ ICartService _cartService, IConfiguration _config)
+    {
+        uow = _uow;
+        cartService = _cartService;
+        config = _config;
+    }
+
+
     public async Task<ShoppingCart> CreateOrUpdatePaymentIntent(string cartId)
     {
-        StripeConfiguration.ApiKey = config["SripeSettings:SecretKey"];
+StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
         var cart = await cartService.GetCartAsync(cartId);
 
         if (cart == null) return null;
@@ -82,5 +94,19 @@ public class PaymentService(IUnitOfWork uow,
         await cartService.SetCartAsync(cart);
 
         return cart;
+    }
+
+    public async Task<string> RefundPayment(string PatmentIntentId)
+    {
+        var refundOptions = new RefundCreateOptions
+        {
+          PaymentIntent = PatmentIntentId  
+        };
+
+        var refundService  = new RefundService();
+
+        var result = await refundService.CreateAsync(refundOptions);
+
+        return result.Status;
     }
 }

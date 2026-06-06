@@ -1,6 +1,6 @@
 using Core.Entities;
 
-public class Order : BaseEntity
+public class Order : BaseEntity , IDtoConvertable
 {
     public DateTime OrderDate { get; set; } = DateTime.UtcNow;
     public required string BuyerEmail { get; set; }
