@@ -7,8 +7,9 @@ using Core.Interfaces;
 using Infrastructure.Services;
 using Infrastructure.Specifications;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
 
-public class OrderController (IUnitOfWork unit,ICartService cartService) : BaseApiController
+public class OrderController (IUnitOfWork unit, ICartService cartService, IConfiguration config) : BaseApiController
 {
     
 [HttpPost]
@@ -24,7 +25,7 @@ public async Task<ActionResult<Order>> CreateOrder(CreateOrderDto orderDto)
 
     foreach (var item in cart.Items)
     {
-        var productItem = await unit.Repository<Product>().GetByIdAsync(item.ProductId);
+        var productItem = await unit.Repository<Core.Entities.Product>().GetByIdAsync(item.ProductId);
         if (productItem == null) return BadRequest("Problem with the order");
 
         var itemOrdered = new ProductItemOrdered
@@ -61,6 +62,16 @@ public async Task<ActionResult<Order>> CreateOrder(CreateOrderDto orderDto)
 
     if (await unit.Complete())
     {
+        StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
+        await new PaymentIntentService().UpdateAsync(cart.PaymentIntentId, new PaymentIntentUpdateOptions
+        {
+            Metadata = new Dictionary<string, string>
+            {
+                { "orderId", order.Id.ToString() },
+                { "buyerEmail", email }
+            }
+        });
+
         return order;
     }
 

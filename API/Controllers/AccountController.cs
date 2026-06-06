@@ -50,13 +50,13 @@ namespace API.Controllers
             return NoContent();
         }
 
-        [Authorize]
         [HttpGet("user-info")]
         public async Task<ActionResult> GetUserInfo()
         {
-            if (User.Identity?.IsAuthenticated == false) return NoContent();
+            if (User.Identity?.IsAuthenticated != true) return NoContent();
 
             var user = await signInManager.UserManager.GetUserEmailWithAddress(User);
+            var roles = await signInManager.UserManager.GetRolesAsync(user);
 
             return Ok(new
             {
@@ -64,7 +64,7 @@ namespace API.Controllers
                 user.LastName,
                 user.Email,
                 Address = user.Address?.ToDto(),
-                Roles = User.FindFirstValue(ClaimTypes.Role)
+                Roles = roles
             });
         }
 
@@ -74,7 +74,7 @@ namespace API.Controllers
         {
             return Ok(new
             {
-                IsAuthemticated = User.Identity?.IsAuthenticated ?? false,
+                IsAuthenticated = User.Identity?.IsAuthenticated ?? false,
             });
         }
 

@@ -3,6 +3,15 @@ using Core.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Stripe;
 
+internal static class PaymentAmountHelper
+{
+    public static long ToCents(decimal amount) =>
+        (long)Math.Round(amount * 100, MidpointRounding.AwayFromZero);
+
+    public static long CalculateCartTotalInCents(IEnumerable<CartItem> items, decimal shipping) =>
+        items.Sum(x => x.Quantity * ToCents(x.Price)) + ToCents(shipping);
+}
+
 public class PaymentService : IPaymentService
 {
     private readonly IUnitOfWork uow;
@@ -51,12 +60,13 @@ StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
 
         if (string.IsNullOrEmpty(cart.PaymentIntentId))
         {
+            var amount = PaymentAmountHelper.CalculateCartTotalInCents(cart.Items, ShippingPrice);
             var options = new PaymentIntentCreateOptions
             {
-                Amount = (long)cart.Items.Sum(x => x.Quantity * (x.Price * 100))
-                    + (long)ShippingPrice * 100,
+                Amount = amount,
                 Currency = "usd",
-                PaymentMethodTypes = ["card"]
+                PaymentMethodTypes = ["card"],
+                Metadata = new Dictionary<string, string> { { "cartId", cartId } }
             };
             intent = await service.CreateAsync(options);
             cart.PaymentIntentId = intent.Id;
@@ -69,12 +79,13 @@ StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
             if (existingIntent.Status == "succeeded" ||
                 existingIntent.Status == "canceled")
             {
+                var amount = PaymentAmountHelper.CalculateCartTotalInCents(cart.Items, ShippingPrice);
                 var options = new PaymentIntentCreateOptions
                 {
-                    Amount = (long)cart.Items.Sum(x => x.Quantity * (x.Price * 100))
-                        + (long)ShippingPrice * 100,
+                    Amount = amount,
                     Currency = "usd",
-                    PaymentMethodTypes = ["card"]
+                    PaymentMethodTypes = ["card"],
+                    Metadata = new Dictionary<string, string> { { "cartId", cartId } }
                 };
                 intent = await service.CreateAsync(options);
                 cart.PaymentIntentId = intent.Id;
@@ -84,8 +95,7 @@ StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
             {
                 var options = new PaymentIntentUpdateOptions
                 {
-                    Amount = (long)cart.Items.Sum(x => x.Quantity * (x.Price * 100))
-                        + (long)ShippingPrice * 100
+                    Amount = PaymentAmountHelper.CalculateCartTotalInCents(cart.Items, ShippingPrice)
                 };
                 intent = await service.UpdateAsync(cart.PaymentIntentId, options);
             }

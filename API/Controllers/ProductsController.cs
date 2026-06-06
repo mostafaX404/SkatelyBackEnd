@@ -19,9 +19,7 @@ namespace API.Controllers
         {
             var spec = new ProductSpecifications(specParams);
 
-            var pagination = await CreatePagedResult<Product>(uow.Repository<Product>(), spec,specParams.PageIndex,specParams.PageSize);
-
-            return Ok(pagination);
+            return await CreatePagedResult<Product>(uow.Repository<Product>(), spec, specParams.PageIndex, specParams.PageSize);
         }
 
         [HttpGet("{id:int}")]
