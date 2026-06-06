@@ -227,4 +227,4 @@ A global `ExceptionMiddleware` catches unhandled exceptions and returns consiste
 
 ## Related
 
-- [Frontend README](../Client/README.md) — Angular client setup and configuration
+- [Frontend README](https://github.com/mostafaX404/SkatelyFrontEnd) — Angular client setup and configuration
