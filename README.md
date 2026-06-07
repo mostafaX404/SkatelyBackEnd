@@ -4,7 +4,8 @@ The Skately backend is a RESTful API built with ASP.NET Core 8. It powers an e-c
 
 The solution follows a **Clean Architecture** layout with separate projects for domain logic, infrastructure, and the HTTP API layer.
 
--[Project Demo](https://www.youtube.com/watch?v=7PJWFehwQpA)
+[Project Demo](https://www.youtube.com/watch?v=7PJWFehwQpA)
+
 ---
 
 ## Features
